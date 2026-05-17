@@ -13,7 +13,7 @@ export async function signInWithEmail(
   });
 
   if (error) {
-    return { error: error.message || 'Failed to sign in. Try again' };
+    return { error: error.message || 'Falha ao entrar. Tente novamente' };
   }
 
   redirect('/');

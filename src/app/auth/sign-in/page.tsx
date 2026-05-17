@@ -8,22 +8,22 @@ export default function SignInForm() {
 
   return (
     <form action={formAction}
-      className="flex flex-col gap-5 min-h-screen items-center justify-center bg-gray-900">
+      className="flex flex-col gap-5 min-h-screen items-center justify-center bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
 
       <div className="w-sm">
-       <h1 className="mt-10 text-center text-2xl/9 font-bold text-white">Sign in to your account</h1>
+       <h1 className="mt-10 text-center text-2xl/9 font-bold">Entre na sua conta</h1>
       </div>
 
       <div className='flex flex-col gap-1.5 w-sm'>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-100">Email address</label>
-        <input id="email" name="email" type="email" required placeholder="john@my-company.com"
-          className="block rounded-md w-full bg-white/5 px-2 py-1.5 placeholder:text-gray-500 text-white outline-1 outline-white/10  focus:outline-indigo-500"/>
+        <label htmlFor="email" className="block text-sm font-medium">Endereço de email</label>
+        <input id="email" name="email" type="email" required placeholder="joao@minha-empresa.com"
+          className="block rounded-md w-full bg-white px-2 py-1.5 text-gray-900 placeholder:text-gray-500 outline-1 outline-gray-400 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"/>
       </div>
 
       <div className='flex flex-col gap-1.5 w-sm'>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-100">Password</label>
+        <label htmlFor="password" className="block text-sm font-medium">Senha</label>
         <input id="password" name="password" type="password" required placeholder="*****"
-          className="block rounded-md w-full bg-white/5 px-2 py-1.5 placeholder:text-gray-500 text-white outline-1 outline-white/10  focus:outline-indigo-500"/>
+          className="block rounded-md w-full bg-white px-2 py-1.5 text-gray-900 placeholder:text-gray-500 outline-1 outline-gray-400 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"/>
       </div>
 
       {state?.error && (
@@ -33,8 +33,8 @@ export default function SignInForm() {
       )}
 
       <button type="submit" disabled={isPending}
-        className="flex w-sm justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400">
-        Sign in
+        className="cursor-pointer flex w-sm justify-center rounded-md bg-gray-900 px-3 py-1.5 text-sm/6 font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300">
+        Entrar
       </button>
     </form>
   );

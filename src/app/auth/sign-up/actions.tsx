@@ -10,7 +10,7 @@ export async function signUpWithEmail(
   const email = formData.get('email') as string;
 
   if (!email) {
-    return { error: "Email address must be provided." }
+    return { error: "O endereço de email deve ser informado." }
   }
 
   // Optionally restrict sign ups based on email address
@@ -25,7 +25,7 @@ export async function signUpWithEmail(
   });
 
   if (error) {
-    return { error: error.message || 'Failed to create account' };
+    return { error: error.message || 'Falha ao criar a conta' };
   }
 
   redirect('/');
