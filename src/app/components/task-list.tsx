@@ -1,4 +1,5 @@
 import type { Task } from '@/generated/prisma';
+import { EditTaskDialog } from './edit-task-dialog';
 
 const repeatLabels: Record<Task['repeat'], string> = {
   No: 'Sem repetição',
@@ -20,12 +21,20 @@ function formatDeadline(deadline: Task['deadline']) {
   }).format(deadline);
 }
 
+function formatDeadlineInput(deadline: Task['deadline']) {
+  if (!deadline) {
+    return '';
+  }
+
+  return deadline.toISOString().slice(0, 10);
+}
+
 function TaskItem({ task }: { task: Task }) {
   return (
     <li className="rounded-md bg-white p-5 shadow-sm ring-1 ring-gray-300 dark:bg-gray-800 dark:ring-gray-700">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold">{task.title}</h2>
+          <p className="text-4xl font-semibold">{task.title}</p>
           {task.description && (
             <p className="mt-2 text-sm leading-6 text-gray-700 dark:text-gray-300">
               {task.description}
@@ -33,13 +42,24 @@ function TaskItem({ task }: { task: Task }) {
           )}
         </div>
 
-        <div className="flex sm:flex-col justify-center sm:justify-strech shrink-0 flex-wrap gap-4 text-xs font-medium">
-          <span className="text-center rounded-md bg-gray-200 px-2.5 py-1 text-gray-800 dark:bg-gray-700 dark:text-gray-100">
-            {formatDeadline(task.deadline)}
-          </span>
-          <span className="text-center rounded-md bg-gray-900 px-2.5 py-1 text-gray-100 dark:bg-gray-100 dark:text-gray-900">
-            {repeatLabels[task.repeat]}
-          </span>
+        <div className="flex shrink-0 flex-wrap items-strech justify-center gap-6 sm:flex-col">
+          <div className="flex flex-wrap justify-center gap-4 text-xs font-medium sm:flex-col">
+            <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+              {formatDeadline(task.deadline)}
+            </span>
+            <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+              {repeatLabels[task.repeat]}
+            </span>
+          </div>
+          <EditTaskDialog
+            task={{
+              id: task.id,
+              title: task.title,
+              description: task.description,
+              deadline: formatDeadlineInput(task.deadline),
+              repeat: task.repeat,
+            }}
+          />
         </div>
       </div>
     </li>
