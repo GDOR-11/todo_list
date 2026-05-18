@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/server';
 import Link from 'next/link';
 import { Header } from './components/header';
 import { prisma } from '@/lib/db';
+import { TaskList } from './components/task-list';
 
 // Server components using auth methods must be rendered dynamically
 export const dynamic = 'force-dynamic';
@@ -31,20 +32,29 @@ export default async function Home() {
     );
   }
 
-  const result = await prisma.task.findMany({
+  const tasks = await prisma.task.findMany({
     where: {
-      userId: session.user.id
-    }
+      userId: session.user.id,
+    },
+    orderBy: [
+      {
+        deadline: 'asc',
+      },
+      {
+        id: 'asc',
+      },
+    ],
   });
-  console.log(result);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center gap-2">
-        <h1 className="mb-4 text-4xl">
-          Autenticado como <span className="font-bold underline">{session.user.name}</span>
-        </h1>
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
+        <div>
+          <h1 className="mt-2 text-4xl font-bold">Minhas tarefas</h1>
+        </div>
+
+        <TaskList tasks={tasks} />
       </main>
     </div>
   );
