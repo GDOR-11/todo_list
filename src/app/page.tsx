@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth/server';
 import Link from 'next/link';
 import { Header } from './components/header';
+import { prisma } from '@/lib/db';
 
 // Server components using auth methods must be rendered dynamically
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,13 @@ export default async function Home() {
       </div>
     );
   }
+
+  const result = await prisma.task.findMany({
+    where: {
+      userId: session.user.id
+    }
+  });
+  console.log(result);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
