@@ -23,7 +23,7 @@ function formatDeadline(deadline: Task['deadline']) {
 function TaskItem({ task }: { task: Task }) {
   return (
     <li className="rounded-md bg-white p-5 shadow-sm ring-1 ring-gray-300 dark:bg-gray-800 dark:ring-gray-700">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-semibold">{task.title}</h2>
           {task.description && (
@@ -33,11 +33,11 @@ function TaskItem({ task }: { task: Task }) {
           )}
         </div>
 
-        <div className="flex shrink-0 flex-wrap gap-2 text-xs font-medium">
-          <span className="rounded-md bg-gray-200 px-2.5 py-1 text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+        <div className="flex sm:flex-col justify-center sm:justify-strech shrink-0 flex-wrap gap-4 text-xs font-medium">
+          <span className="text-center rounded-md bg-gray-200 px-2.5 py-1 text-gray-800 dark:bg-gray-700 dark:text-gray-100">
             {formatDeadline(task.deadline)}
           </span>
-          <span className="rounded-md bg-gray-900 px-2.5 py-1 text-gray-100 dark:bg-gray-100 dark:text-gray-900">
+          <span className="text-center rounded-md bg-gray-900 px-2.5 py-1 text-gray-100 dark:bg-gray-100 dark:text-gray-900">
             {repeatLabels[task.repeat]}
           </span>
         </div>
