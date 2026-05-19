@@ -159,7 +159,7 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
               name="deadline"
               type="datetime-local"
               defaultValue={formatDeadlineInput(task.deadline)}
-              className="rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
+              className="w-1/1 rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
             />
           </div>
 
