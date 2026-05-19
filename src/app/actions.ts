@@ -13,6 +13,38 @@ export async function signOut() {
   redirect('/');
 }
 
+export async function createTask() {
+  const { data: session } = await auth.getSession();
+
+  if (!session?.user) {
+    return { error: 'Você precisa estar autenticado para criar tarefas.' };
+  }
+
+  const task = await prisma.task.create({
+    data: {
+      userId: session.user.id,
+      title: 'Nova tarefa',
+      repeat: Repeat.No,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      deadline: true,
+      repeat: true,
+    },
+  });
+
+  revalidatePath('/');
+
+  return {
+    task: {
+      ...task,
+      deadline: task.deadline ? task.deadline.toISOString().slice(0, 10) : '',
+    },
+  };
+}
+
 export async function updateTask(formData: FormData) {
   const { data: session } = await auth.getSession();
 
