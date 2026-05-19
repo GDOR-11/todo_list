@@ -114,7 +114,7 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
             <button
               type="button"
               onClick={closeDialog}
-              className="rounded-md px-2 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               aria-label="Fechar"
             >
               Fechar
@@ -191,7 +191,7 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
             <button
               type="button"
               onClick={closeDialog}
-              className="rounded-md px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="cursor-pointer rounded-md px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               Cancelar
             </button>
@@ -199,14 +199,14 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
               type="button"
               onClick={handleDelete}
               disabled={isPending}
-              className="rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-red-500 dark:hover:bg-red-400"
+              className="cursor-pointer rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-red-500 dark:hover:bg-red-400"
             >
               Excluir
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
+              className="cursor-pointer rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
             >
               {isPending ? 'Salvando...' : 'Salvar'}
             </button>
