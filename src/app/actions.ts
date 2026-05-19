@@ -8,6 +8,46 @@ import { Repeat } from '@/generated/prisma';
 
 const repeatValues = Object.values(Repeat);
 
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function addMonthsClamped(date: Date, months: number) {
+  const next = new Date(date);
+  const targetMonth = next.getMonth() + months;
+  const targetYear = next.getFullYear() + Math.floor(targetMonth / 12);
+  const normalizedMonth = ((targetMonth % 12) + 12) % 12;
+  const targetDay = Math.min(next.getDate(), getDaysInMonth(targetYear, normalizedMonth));
+
+  next.setFullYear(targetYear, normalizedMonth, targetDay);
+
+  return next;
+}
+
+function getNextDeadline(deadline: Date | null, repeat: Repeat) {
+  const next = new Date(deadline ?? new Date());
+
+  if (repeat === Repeat.Daily) {
+    next.setDate(next.getDate() + 1);
+    return next;
+  }
+
+  if (repeat === Repeat.Weekly) {
+    next.setDate(next.getDate() + 7);
+    return next;
+  }
+
+  if (repeat === Repeat.Monthly) {
+    return addMonthsClamped(next, 1);
+  }
+
+  if (repeat === Repeat.Yearly) {
+    return addMonthsClamped(next, 12);
+  }
+
+  return null;
+}
+
 export async function signOut() {
   await auth.signOut();
   redirect('/');
@@ -107,11 +147,11 @@ export async function updateTask(formData: FormData) {
   return { success: true };
 }
 
-export async function deleteTask(taskId: number) {
+export async function completeTask(taskId: number) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user) {
-    return { error: 'Você precisa estar autenticado para excluir tarefas.' };
+    return { error: 'Você precisa estar autenticado para concluir tarefas.' };
   }
 
   if (!Number.isInteger(taskId)) {
@@ -125,6 +165,8 @@ export async function deleteTask(taskId: number) {
     },
     select: {
       id: true,
+      deadline: true,
+      repeat: true,
     },
   });
 
@@ -132,11 +174,22 @@ export async function deleteTask(taskId: number) {
     return { error: 'Tarefa não encontrada.' };
   }
 
-  await prisma.task.delete({
-    where: {
-      id: task.id,
-    },
-  });
+  if (task.repeat === Repeat.No) {
+    await prisma.task.delete({
+      where: {
+        id: task.id,
+      },
+    });
+  } else {
+    await prisma.task.update({
+      where: {
+        id: task.id,
+      },
+      data: {
+        deadline: getNextDeadline(task.deadline, task.repeat),
+      },
+    });
+  }
 
   revalidatePath('/');
 

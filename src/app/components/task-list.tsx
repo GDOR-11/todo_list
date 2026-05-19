@@ -1,5 +1,5 @@
 import type { Task } from '@/generated/prisma';
-import { DeleteTaskButton } from './delete-task-button';
+import { CompleteTaskButton } from './complete-task-button';
 import { EditTaskDialog } from './edit-task-dialog';
 
 const repeatLabels: Record<Task['repeat'], string> = {
@@ -59,7 +59,7 @@ function TaskItem({ task }: { task: Task }) {
               repeat: task.repeat,
             }}
           />
-          <DeleteTaskButton taskId={task.id} />
+          <CompleteTaskButton taskId={task.id} />
         </div>
       </div>
     </li>
