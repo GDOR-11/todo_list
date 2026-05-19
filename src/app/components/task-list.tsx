@@ -33,7 +33,7 @@ function formatDeadlineInput(deadline: Task['deadline']) {
 function TaskItem({ task }: { task: Task }) {
   return (
     <li className="rounded-md bg-white p-5 shadow-sm ring-1 ring-gray-300 dark:bg-gray-800 dark:ring-gray-700">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row items-center sm:justify-between">
         <div className="min-w-0">
           <p className="text-3xl font-semibold">{task.title}</p>
           {task.description && (
@@ -43,27 +43,23 @@ function TaskItem({ task }: { task: Task }) {
           )}
         </div>
 
-        <div className="flex shrink-0 flex-col items-stretch justify-center gap-4">
-          <div className="flex flex-wrap justify-center gap-3 text-xs font-medium">
-            <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
-              {formatDeadline(task.deadline)}
-            </span>
-            <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
-              {repeatLabels[task.repeat]}
-            </span>
-          </div>
-          <div className="flex justify-center gap-3">
-            <EditTaskDialog
-              task={{
-                id: task.id,
-                title: task.title,
-                description: task.description,
-                deadline: formatDeadlineInput(task.deadline),
-                repeat: task.repeat,
-              }}
-            />
-            <DeleteTaskButton taskId={task.id} />
-          </div>
+        <div className="w-max grid shrink-0 grid-cols-2 gap-3 sm:gap-y-5 items-center text-xs font-medium">
+          <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+            {formatDeadline(task.deadline)}
+          </span>
+          <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+            {repeatLabels[task.repeat]}
+          </span>
+          <EditTaskDialog
+            task={{
+              id: task.id,
+              title: task.title,
+              description: task.description,
+              deadline: formatDeadlineInput(task.deadline),
+              repeat: task.repeat,
+            }}
+          />
+          <DeleteTaskButton taskId={task.id} />
         </div>
       </div>
     </li>
