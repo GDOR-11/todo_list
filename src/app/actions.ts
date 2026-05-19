@@ -78,10 +78,7 @@ export async function createTask() {
   revalidatePath('/');
 
   return {
-    task: {
-      ...task,
-      deadline: task.deadline ? task.deadline.toISOString().slice(0, 10) : '',
-    },
+    task,
   };
 }
 
@@ -110,7 +107,7 @@ export async function updateTask(formData: FormData) {
     return { error: 'Repetição inválida.' };
   }
 
-  const deadline = deadlineValue ? new Date(`${deadlineValue}T00:00:00`) : null;
+  const deadline = deadlineValue ? new Date(deadlineValue) : null;
 
   if (deadline && Number.isNaN(deadline.getTime())) {
     return { error: 'Prazo inválido.' };

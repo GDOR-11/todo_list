@@ -9,15 +9,13 @@ export type EditableTask = {
   id: number;
   title: string;
   description: string | null;
-  deadline: string;
+  deadline: Date | null;
   repeat: Repeat;
 };
 
 type EditTaskDialogProps = {
-  task: EditableTask;
-  openOnMount?: boolean;
-  refreshOnClose?: boolean;
-  showTrigger?: boolean;
+  task: EditableTask | null;
+  onClose?: () => void;
 };
 
 const repeatOptions: Array<{ value: Repeat; label: string }> = [
@@ -28,27 +26,36 @@ const repeatOptions: Array<{ value: Repeat; label: string }> = [
   { value: Repeat.Yearly, label: 'Anual' },
 ];
 
-export function EditTaskDialog({
-  task,
-  openOnMount = false,
-  refreshOnClose = false,
-  showTrigger = true,
-}: EditTaskDialogProps) {
+function padDatePart(value: number) {
+  return String(value).padStart(2, '0');
+}
+
+function formatDeadlineInput(deadline: Date | null) {
+  if (!deadline) {
+    return '';
+  }
+
+  const year = deadline.getFullYear();
+  const month = padDatePart(deadline.getMonth() + 1);
+  const day = padDatePart(deadline.getDate());
+  const hours = padDatePart(deadline.getHours());
+  const minutes = padDatePart(deadline.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (openOnMount && !dialogRef.current?.open) {
+    if (task && !dialogRef.current?.open) {
+      setError(null);
       dialogRef.current?.showModal();
     }
-  }, [openOnMount]);
-
-  function openDialog() {
-    setError(null);
-    dialogRef.current?.showModal();
-  }
+  }, [task]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -74,28 +81,14 @@ export function EditTaskDialog({
   }
 
   return (
-    <>
-      {showTrigger && (
-        <button
-          type="button"
-          onClick={openDialog}
-          className="cursor-pointer rounded-md bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
-        >
-          Editar
-        </button>
-      )}
-
-      <dialog
-        ref={dialogRef}
-        closedby="any"
-        onClose={() => {
-          if (refreshOnClose) {
-            router.refresh();
-          }
-        }}
-        className="m-auto w-[min(92vw,32rem)] rounded-md bg-white p-0 text-gray-900 shadow-xl backdrop:backdrop-blur-xs backdrop:bg-gray-900/60 dark:backdrop:bg-gray-100/40 dark:bg-gray-800 dark:text-gray-100"
-      >
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-6">
+    <dialog
+      ref={dialogRef}
+      closedby="any"
+      onClose={onClose}
+      className="m-auto w-[min(92vw,32rem)] rounded-md bg-white p-0 text-gray-900 shadow-xl backdrop:backdrop-blur-xs backdrop:bg-gray-900/60 dark:backdrop:bg-gray-100/40 dark:bg-gray-800 dark:text-gray-100"
+    >
+      {task && (
+        <form key={task.id} onSubmit={handleSubmit} className="flex flex-col gap-5 p-6">
           <div className="flex items-start justify-between gap-4">
             <h2 className="text-2xl font-bold">Editar tarefa</h2>
             <button
@@ -137,37 +130,35 @@ export function EditTaskDialog({
             />
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`deadline-${task.id}`} className="text-sm font-medium">
-                Prazo
-              </label>
-              <input
-                id={`deadline-${task.id}`}
-                name="deadline"
-                type="date"
-                defaultValue={task.deadline}
-                className="rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
-              />
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor={`deadline-${task.id}`} className="text-sm font-medium">
+              Prazo
+            </label>
+            <input
+              id={`deadline-${task.id}`}
+              name="deadline"
+              type="datetime-local"
+              defaultValue={formatDeadlineInput(task.deadline)}
+              className="rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
+            />
+          </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`repeat-${task.id}`} className="text-sm font-medium">
-                Repetição
-              </label>
-              <select
-                id={`repeat-${task.id}`}
-                name="repeat"
-                defaultValue={task.repeat}
-                className="rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
-              >
-                {repeatOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor={`repeat-${task.id}`} className="text-sm font-medium">
+              Repetição
+            </label>
+            <select
+              id={`repeat-${task.id}`}
+              name="repeat"
+              defaultValue={task.repeat}
+              className="rounded-md bg-gray-100 px-3 py-2 text-gray-900 outline-1 outline-gray-300 focus:outline-gray-900 dark:bg-white/5 dark:text-gray-100 dark:outline-white/10 dark:focus:outline-gray-100"
+            >
+              {repeatOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {error && (
@@ -193,7 +184,7 @@ export function EditTaskDialog({
             </button>
           </div>
         </form>
-      </dialog>
-    </>
+      )}
+    </dialog>
   );
 }

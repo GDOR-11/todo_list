@@ -19,17 +19,37 @@ const repeatLabels: Record<Repeat, string> = {
   Yearly: 'Anual',
 };
 
-function formatDeadline(deadline: string) {
+function formatDeadline(deadline: Date | null) {
   if (!deadline) {
     return 'Sem prazo';
   }
 
-  return new Intl.DateTimeFormat('pt-BR', {
+  const today = new Date();
+  const isToday =
+    deadline.getDate() === today.getDate() &&
+    deadline.getMonth() === today.getMonth() &&
+    deadline.getFullYear() === today.getFullYear();
+  const isCurrentYear = deadline.getFullYear() === today.getFullYear();
+
+  if (isToday) {
+    return new Intl.DateTimeFormat('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(deadline);
+  }
+
+  const options: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(`${deadline}T00:00:00`));
+    minute: '2-digit',
+  };
+
+  if (!isCurrentYear) {
+    options.year = 'numeric';
+  }
+
+  return new Intl.DateTimeFormat('pt-BR', options).format(deadline);
 }
 
 function TaskItem({
