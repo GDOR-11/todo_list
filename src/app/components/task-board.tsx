@@ -59,8 +59,16 @@ function TaskItem({
   task: EditableTask;
   onEdit: (task: EditableTask) => void;
 }) {
+  const isOverdue = task.deadline ? task.deadline < new Date() : false;
+
   return (
-    <li className="rounded-md bg-white p-5 shadow-sm ring-1 ring-gray-300 dark:bg-gray-800 dark:ring-gray-700">
+    <li
+      className={`rounded-md p-5 shadow-sm ring-1 ${
+        isOverdue
+          ? 'bg-red-100 ring-red-300 dark:bg-red-950/50 dark:ring-red-900'
+          : 'bg-white ring-gray-300 dark:bg-gray-800 dark:ring-gray-700'
+      }`}
+    >
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
         <div className="min-w-0">
           <p className="text-3xl font-semibold">{task.title}</p>
@@ -72,10 +80,10 @@ function TaskItem({
         </div>
 
         <div className="grid shrink-0 grid-cols-2 items-center gap-3 text-xs font-medium sm:gap-y-5">
-          <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+          <span className="rounded-md bg-gray-300 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
             {formatDeadline(task.deadline)}
           </span>
-          <span className="rounded-md bg-gray-200 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+          <span className="rounded-md bg-gray-300 px-2.5 py-1 text-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
             {repeatLabels[task.repeat]}
           </span>
           <button
