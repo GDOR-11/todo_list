@@ -3,16 +3,21 @@
 import { updateTask } from '@/app/actions';
 import { Repeat } from '@/generated/prisma';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useRef, useState, useTransition } from 'react';
+import { FormEvent, useEffect, useRef, useState, useTransition } from 'react';
+
+export type EditableTask = {
+  id: number;
+  title: string;
+  description: string | null;
+  deadline: string;
+  repeat: Repeat;
+};
 
 type EditTaskDialogProps = {
-  task: {
-    id: number;
-    title: string;
-    description: string | null;
-    deadline: string;
-    repeat: Repeat;
-  };
+  task: EditableTask;
+  openOnMount?: boolean;
+  refreshOnClose?: boolean;
+  showTrigger?: boolean;
 };
 
 const repeatOptions: Array<{ value: Repeat; label: string }> = [
@@ -23,11 +28,22 @@ const repeatOptions: Array<{ value: Repeat; label: string }> = [
   { value: Repeat.Yearly, label: 'Anual' },
 ];
 
-export function EditTaskDialog({ task }: EditTaskDialogProps) {
+export function EditTaskDialog({
+  task,
+  openOnMount = false,
+  refreshOnClose = false,
+  showTrigger = true,
+}: EditTaskDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (openOnMount && !dialogRef.current?.open) {
+      dialogRef.current?.showModal();
+    }
+  }, [openOnMount]);
 
   function openDialog() {
     setError(null);
@@ -59,17 +75,24 @@ export function EditTaskDialog({ task }: EditTaskDialogProps) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={openDialog}
-        className="rounded-md bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
-      >
-        Editar
-      </button>
+      {showTrigger && (
+        <button
+          type="button"
+          onClick={openDialog}
+          className="rounded-md bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
+        >
+          Editar
+        </button>
+      )}
 
       <dialog
         ref={dialogRef}
         closedby="any"
+        onClose={() => {
+          if (refreshOnClose) {
+            router.refresh();
+          }
+        }}
         className="m-auto w-[min(92vw,32rem)] rounded-md bg-white p-0 text-gray-900 shadow-xl backdrop:backdrop-blur-xs backdrop:bg-gray-900/60 dark:backdrop:bg-gray-100/40 dark:bg-gray-800 dark:text-gray-100"
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-6">
