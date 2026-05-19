@@ -1,6 +1,6 @@
 'use client';
 
-import { updateTask } from '@/app/actions';
+import { deleteTask, updateTask } from '@/app/actions';
 import { Repeat } from '@/generated/prisma';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useEffect, useRef, useState, useTransition } from 'react';
@@ -69,6 +69,26 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
 
     startTransition(async () => {
       const result = await updateTask(formData);
+
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+
+      router.refresh();
+      closeDialog();
+    });
+  }
+
+  function handleDelete() {
+    if (!task) {
+      return;
+    }
+
+    setError(null);
+
+    startTransition(async () => {
+      const result = await deleteTask(task.id);
 
       if (result?.error) {
         setError(result.error);
@@ -174,6 +194,14 @@ export function EditTaskDialog({ task, onClose }: EditTaskDialogProps) {
               className="rounded-md px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isPending}
+              className="rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-red-500 dark:hover:bg-red-400"
+            >
+              Excluir
             </button>
             <button
               type="submit"

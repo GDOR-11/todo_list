@@ -192,3 +192,39 @@ export async function completeTask(taskId: number) {
 
   return { success: true };
 }
+
+export async function deleteTask(taskId: number) {
+  const { data: session } = await auth.getSession();
+
+  if (!session?.user) {
+    return { error: 'Você precisa estar autenticado para excluir tarefas.' };
+  }
+
+  if (!Number.isInteger(taskId)) {
+    return { error: 'Tarefa inválida.' };
+  }
+
+  const task = await prisma.task.findFirst({
+    where: {
+      id: taskId,
+      userId: session.user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!task) {
+    return { error: 'Tarefa não encontrada.' };
+  }
+
+  await prisma.task.delete({
+    where: {
+      id: task.id,
+    },
+  });
+
+  revalidatePath('/');
+
+  return { success: true };
+}
