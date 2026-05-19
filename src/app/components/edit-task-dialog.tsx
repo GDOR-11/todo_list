@@ -79,7 +79,7 @@ export function EditTaskDialog({
         <button
           type="button"
           onClick={openDialog}
-          className="rounded-md bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
+          className="cursor-pointer rounded-md bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-100 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
         >
           Editar
         </button>
